@@ -1,0 +1,124 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{hyperref}
+
+\title{Pytorch}
+\author{Ramex}
+\date{June 2024}
+
+\begin{document}
+
+\maketitle
+
+\section{Tensors}
+
+A Tensor is like an n-dimensional array (multi-dimensional array) 
+in numpy, but with additional features. 
+A tensor can be created from a list or a numpy array.
+The tensor can be converted to a numpy array using the \texttt{numpy()} 
+method. The tensor itself can be used for gpu computations.
+
+\subsection{Initializing a Tensor}
+
+A tensor can be initialized by a number of methods, for example:
+
+\begin{itemize}
+    \item 1. Directly from data \\
+    \texttt{
+        data = [[1,2,3],[4,5,6]], \\
+        data\_ = torch.tensor(data)
+    }
+    \item 2. From a numpy array \\
+    \texttt{
+        data = np.array(data), \\
+        data\_x = torch.tensor(data)
+    }
+    \item 3. From another tensor (creates a copy of the tensor with ones only) \\
+    \texttt{torch.ones\_like(x\_data)}
+    \item 4. Random or constant values (this takes the shape as input) \\
+    \texttt{x\_ones = torch.ones\_like(x\_data)}
+\end{itemize}
+
+\subsection{Attributes of a Tensor}
+
+A tensor has the following attributes:
+\begin{itemize}
+    \item 1. \texttt{shape} : The shape of the tensor
+    \item 2. \texttt{dtype} : The data type of the tensor
+    \item 3. \texttt{device} : The device on which the tensor is stored
+    \item 4. \texttt{size} : The number of elements in the tensor
+    \item 5. \texttt{numel} : The number of elements in the tensor
+    \item 6. \texttt{T} : The transposed tensor
+    \item 7. \texttt{contiguous} : The contiguous tensor
+    \item 8. \texttt{view} : The view of the tensor
+    \item 9. \texttt{requires\_grad} : The gradient required for the tensor
+    \item 10. \texttt{grad} : The gradient of the tensor
+    \item more $\dots \Rightarrow$ \href{https://pytorch.org/docs/stable/tensors.html}{Pytorch Documentation}
+\end{itemize}
+
+\subsection{Indexing and Slicing}
+
+Indexing and slicing works the same as in numpy. For example:
+\begin{itemize}
+    \item 1. \texttt{x[0]} : The first element of the tensor
+    \item 2. \texttt{x[0,0]} : The first element of the first row
+    \item 3. \texttt{x[0,:]} : The first row of the tensor
+    \item 4. \texttt{x[:,0]} : The first column of the tensor
+    \item 5. \texttt{x[0:2,0:2]} : The first two rows and columns of the tensor
+\end{itemize}
+
+\subsection{Joining tensors}
+
+Tensors can be joined using the \texttt{torch.cat()} method. For example:
+
+\begin{itemize}
+    \item 1. \texttt{torch.cat([x,y], dim=0)} : Concatenates the tensors along the rows
+    \item 2. \texttt{torch.cat([x,y], dim=1)} : Concatenates the tensors along the columns
+    \item 3. \texttt{torch.stack([x,y], dim=0)} : Stacks the tensors along the rows
+    \item 4. \texttt{torch.stack([x,y], dim=1)} : Stacks the tensors along the columns
+\end{itemize}
+
+\subsection{Single-element tensors}
+
+A single-element tensor is a tensor with one element. For example:
+
+\begin{itemize}
+    \item 1. \texttt{x.item()} : Returns the value of the tensor as a python number
+    \item 2. \texttt{x.tolist()} : Returns the value of the tensor as a python list
+    \item 3. \texttt{x.numpy()} : Returns the value of the tensor as a numpy array
+    \item 4. \texttt{x.to(device)} : Moves the tensor to the specified device
+\end{itemize}
+
+\subsection{Tensor to NumPy array}
+
+A tensor can be converted to a numpy array using the \texttt{numpy()} method. Example:
+
+\begin{itemize}
+    \item 1. \texttt{x.numpy()} : Converts the tensor to a numpy array
+    \item 2. \texttt{x.cpu().numpy()} : Converts the tensor to a numpy array on the cpu
+    \item 3. \texttt{x.cuda().numpy()} : Converts the tensor to a numpy array on the gpu
+\end{itemize}
+
+\section{Datasets \& DataLoaders}
+
+\subsection{Loading a Dataset}
+
+A dataset can be loaded using the \texttt{torch.utils.data.Dataset} class.
+
+\subsection{Iterating and Visualizing the Dataset}
+
+A dataset can be iterated over using a for loop. For example:
+
+\section{Transforms}
+
+Data does not always come in its final processed form that is required for 
+training machine learning algorithms. We use transforms to perform some 
+manipulation of the data and make it suitable for training. \\
+
+The FashionMNIST features are in PIL Image format, and the labels are integers. 
+For training, we need the features as normalized tensors, and the labels as 
+one-hot encoded tensors. To make these transformations, we use ToTensor and 
+Lambda.
+
+
+\end{document}
