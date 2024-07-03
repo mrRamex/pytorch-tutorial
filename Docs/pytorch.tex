@@ -1,12 +1,28 @@
 \documentclass{article}
 \usepackage{graphicx} % Required for inserting images
 \usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
 
 \title{Pytorch}
 \author{Ramex}
 \date{June 2024}
 
 \begin{document}
+
+\lstset{ 
+    language=Python,                % choose the language of the code
+    numbers=left,                   % where to put the line-numbers
+    numberstyle=\tiny\color{gray},  % the style that is used for the line-numbers
+    basicstyle=\ttfamily,           % the size of the fonts that are used for the code
+    keywordstyle=\color{blue},      % keyword style
+    commentstyle=\color{green},     % comment style
+    stringstyle=\color{red},        % string literal style
+    breaklines=true,                % automatic line breaking
+    breakatwhitespace=false,        % don't break at whitespace
+    showspaces=false,               % show spaces
+    showstringspaces=false,         % underline spaces within strings
+}
 
 \maketitle
 
@@ -103,22 +119,230 @@ A tensor can be converted to a numpy array using the \texttt{numpy()} method. Ex
 
 \subsection{Loading a Dataset}
 
-A dataset can be loaded using the \texttt{torch.utils.data.Dataset} class.
+Loading datasets in PyTorch involves using the torch.utils.data module, which provides utilities for efficiently loading and processing data. The key components 
+include Dataset and DataLoader.
+\subsubsection{Key Components}
 
-\subsection{Iterating and Visualizing the Dataset}
+\begin{itemize}
+    \item 1. Dataset: An abstract class representing a dataset. You need to subclass this and implement two methods:
+    \item 1.1. \_\_len\_\_: Returns the size of the dataset.
+    \item 1.2. \_\_getitem\_\_: Supports indexing such that dataset[i] can be used to get the ith sample.
+    \item 2. DataLoader: Combines a dataset and a sampler, and provides an iterable over the given dataset. It supports batching, shuffling, and parallel data loading.
+\end{itemize}
+
+\subsubsection{Example: Loading a Custom Dataset}
+Let's go through an example of creating a custom dataset and loading it using PyTorch.
+
+\subsubsection{Step 1: Import Required Libraries}
+
+\begin{lstlisting}
+import torch
+from torch.utils.data import Dataset, DataLoader
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+
+\end{lstlisting}
+
+\subsubsection{Step 2: Create a Custom Dataset}
+Assume we have a CSV file data.csv with the following structure:
+\begin{lstlisting}
+text,label
+"I love PyTorch", positive
+"I hate bugs", negative
+
+\end{lstlisting}
+
+We will create a custom dataset to load this data.
+
+\begin{lstlisting}
+    class TextDataset(Dataset):
+    def __init__(self, csv_file):
+        self.data = pd.read_csv(csv_file)
+        self.texts = self.data['text'].values
+        self.labels = self.data['label'].values
+        
+        # Encode labels as integers
+        self.label_encoder = LabelEncoder()
+        self.labels = self.label_encoder.fit_transform(self.labels)
+
+    def __len__(self):
+        return len(self.texts)
+
+    def __getitem__(self, idx):
+        text = self.texts[idx]
+        label = self.labels[idx]
+        return text, label
+
+\end{lstlisting}
+
+\subsubsection{Step 3: Instantiate the Dataset and DataLoader}
+
+\begin{lstlisting}
+# Create an instance of the dataset
+dataset = TextDataset(csv_file='data.csv')
+
+# Create a DataLoader for the dataset
+dataloader = DataLoader(dataset, batch_size=2, shuffle=True, num_workers=2)
+
+\end{lstlisting}
+
+\subsubsection{Explanation of DataLoader Parameters}
+
+\begin{itemize}
+    \item dataset: The dataset from which to load the data.
+    \item batch\_size: How many samples per batch to load.
+    \item shuffle: Set to True to have the data reshuffled at every epoch.
+    \item num\_workers: How many subprocesses to use for data loading. 0 means that the data will be loaded in the main process.
+\end{itemize}
+
+\subsection{Step 4: Iterate Through the DataLoader}
 
 A dataset can be iterated over using a for loop. For example:
 
+\begin{lstlisting}
+    for batch in dataloader:
+    texts, labels = batch
+    print(texts)
+    print(labels)
+\end{lstlisting}
+
+\subsection{Using Built-In Datasets}
+
+PyTorch also provides utilities for loading several standard datasets, such as MNIST, CIFAR-10, and ImageNet, through the torchvision package.
+
+\subsubsection{Example: Loading the MNIST Dataset}
+
+\begin{lstlisting}
+import torchvision.transforms as transforms
+from torchvision.datasets import MNIST
+
+# Define a transform to normalize the data
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.1307,), (0.3081,))
+])
+
+# Download and load the training dataset
+train_dataset = MNIST(root='mnist_data', train=True, download=True, transform=transform)
+
+# Create a DataLoader for the training dataset
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=2)
+
+# Iterate through the DataLoader
+for batch in train_loader:
+    images, labels = batch
+    print(images.shape)
+    print(labels)
+    break
+
+\end{lstlisting}
+
 \section{Transforms}
 
-Data does not always come in its final processed form that is required for 
-training machine learning algorithms. We use transforms to perform some 
-manipulation of the data and make it suitable for training. \\
+Transformers are a type of neural network architecture designed for 
+handling sequential data, such as text. They have become a cornerstone of 
+modern natural language processing (NLP) due to their ability to capture 
+long-range dependencies and parallelize training. Here’s an explanation of 
+Transformers and how to implement them using PyTorch.\\
 
-The FashionMNIST features are in PIL Image format, and the labels are integers. 
-For training, we need the features as normalized tensors, and the labels as 
-one-hot encoded tensors. To make these transformations, we use ToTensor and 
-Lambda.
+\subsection{Transformer Architecture}
 
+The Transformer model was introduced in the paper "Attention is All You 
+Need" by Vaswani et al. in 2017. It consists of an encoder-decoder 
+structure, where both the encoder and decoder are composed of a stack of 
+identical layers.
+
+\subsection{Key Components}
+
+\begin{itemize}
+    \item 1. Multi-Head Self-Attention Mechanism: Allows the model to focus on different parts of the input sequence simultaneously.
+    \item 2. Positional Encoding: Adds information about the position of words in the sequence.
+    \item 3. Feed-Forward Neural Network: Applied to each position separately and identically.
+    \item 4. Layer Normalization and Residual Connections: Improve training dynamics by normalizing intermediate layers and adding shortcuts to skip connections.
+\end{itemize}
+
+\subsection{PyTorch Implementation}
+
+PyTorch provides a built-in module for the Transformer model through torch.nn.Transformer. Here’s a step-by-step guide to implementing a basic Transformer 
+model in PyTorch.
+
+\subsubsection{Step 1: Import Required Libraries}
+
+\begin{lstlisting}
+    import torch
+    import torch.nn as nn
+    import torch.optim as optim
+    import math    
+\end{lstlisting}
+    
+\subsubsection*{Step 2: Positional Encoding}
+Positional encoding helps the model to understand the order of the sequence.
+
+\begin{lstlisting}
+    class PositionalEncoding(nn.Module):
+    def __init__(self, d_model, max_len=5000):
+        super(PositionalEncoding, self).__init__()
+        self.pe = torch.zeros(max_len, d_model).unsqueeze(0)
+        position = torch.arange(0, max_len).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2) * -(math.log(10000.0) / d_model))
+        self.pe[:, :, 0::2] = torch.sin(position * div_term)
+        self.pe[:, :, 1::2] = torch.cos(position * div_term)
+
+    def forward(self, x):
+        x = x + self.pe[:, :x.size(1)]
+        return x
+\end{lstlisting}
+
+\subsubsection*{Step 3: Transformer Model}
+
+\begin{lstlisting}
+    class TransformerModel(nn.Module):
+    def __init__(self, input_dim, model_dim, output_dim, nhead, num_encoder_layers, num_decoder_layers, dim_feedforward, max_seq_length):
+        super(TransformerModel, self).__init__()
+        self.model_type = 'Transformer'
+        self.pos_encoder = PositionalEncoding(model_dim, max_seq_length)
+        self.encoder = nn.Embedding(input_dim, model_dim)
+        self.decoder = nn.Embedding(output_dim, model_dim)
+        self.transformer = nn.Transformer(d_model=model_dim, nhead=nhead, 
+            num_encoder_layers=num_encoder_layers,
+            num_decoder_layers=num_decoder_layers, dim_feedforward=dim_feedforward)
+        self.fc_out = nn.Linear(model_dim, output_dim)
+        self.model_dim = model_dim
+
+    def forward(self, src, tgt, src_mask=None, tgt_mask=None):
+        src = self.encoder(src) * math.sqrt(self.model_dim)
+        tgt = self.decoder(tgt) * math.sqrt(self.model_dim)
+        src = self.pos_encoder(src)
+        tgt = self.pos_encoder(tgt)
+        output = self.transformer(src, tgt, src_mask, tgt_mask)
+        output = self.fc_out(output)
+        return output
+\end{lstlisting}
+
+\subsubsection*{Step 4: Example Usage}
+
+\begin{lstlisting}
+    # Define the model parameters
+input_dim = 1000  # Size of the input vocabulary
+model_dim = 512   # Dimension of the model
+output_dim = 1000 # Size of the output vocabulary
+nhead = 8         # Number of attention heads
+num_encoder_layers = 6
+num_decoder_layers = 6
+dim_feedforward = 2048
+max_seq_length = 100
+
+# Instantiate the model
+model = TransformerModel(input_dim, model_dim, output_dim, nhead, num_encoder_layers, num_decoder_layers, dim_feedforward, max_seq_length)
+
+# Define input and output sequences (batch_size, sequence_length)
+src = torch.randint(0, input_dim, (10, 32))  # Example source sequence
+tgt = torch.randint(0, output_dim, (10, 32)) # Example target sequence
+
+# Forward pass
+output = model(src, tgt)
+
+print(output.shape)  # Output shape will be (sequence_length, batch_size, output_dim)
+\end{lstlisting}
 
 \end{document}
