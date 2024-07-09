@@ -1,8 +1,8 @@
 # Fdb version 3
-["pdflatex"] 1720026450 "/home/ramex/pytorch-tutorial/Docs/pytorch.tex" "pytorch.pdf" "pytorch" 1720026450
+["pdflatex"] 1720510117 "/home/ramex/pytorch-tutorial/Docs/pytorch.tex" "pytorch.pdf" "pytorch" 1720510117
   "/etc/texmf/web2c/texmf.cnf" 1711481455 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/home/ramex/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk" 1718030907 11524 63d9d7ffc09713b42cc2e86b9b11bf4a ""
-  "/home/ramex/pytorch-tutorial/Docs/pytorch.tex" 1720026449 12791 fc256e9cc268f20fab9e71e3739cce34 ""
+  "/home/ramex/pytorch-tutorial/Docs/pytorch.tex" 1720510116 15402 5f74ac3332844735ca0de10ee0ec84eb ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/tcrm1000.tfm" 1136768653 1536 e07581a4bb3136ece9eeb4c3ffab8233 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm" 1136768653 1328 c834bbb027764024c09d3d2bf908b5f0 ""
@@ -79,9 +79,9 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1644012257 39432 7155514e09a3d69036fac785183a21c2 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1718667429 4075618 3da50f4aa344e5a6d9649dd6d6ecec81 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1718667444 1435826 413c51fc718430996a28b757ac14c4f9 ""
-  "pytorch.aux" 1720026450 3756 02785792f2f402543d16f50e1999e976 "pdflatex"
-  "pytorch.out" 1720026450 4327 840864775fe7d513426a12df7557fb8a "pdflatex"
-  "pytorch.tex" 1720026449 12791 fc256e9cc268f20fab9e71e3739cce34 ""
+  "pytorch.aux" 1720510117 4518 704617f764bd31898402fd7aedbb83b1 "pdflatex"
+  "pytorch.out" 1720510117 5410 c5e0aa60878564f790691320bb0d2e8a "pdflatex"
+  "pytorch.tex" 1720510116 15402 5f74ac3332844735ca0de10ee0ec84eb ""
   (generated)
   "pytorch.aux"
   "pytorch.log"

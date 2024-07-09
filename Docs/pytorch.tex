@@ -345,4 +345,104 @@ output = model(src, tgt)
 print(output.shape)  # Output shape will be (sequence_length, batch_size, output_dim)
 \end{lstlisting}
 
+\section{Build the Neural Network}
+
+\begin{lstlisting}
+import os   # import the os library
+import torch    # import the torch library
+from torch import nn    # import the nn library from torch
+from torch.utils.data import DataLoader # import the DataLoader class
+from torchvision import datasets, transforms # import the datasets and transforms library
+\end{lstlisting}
+
+\subsection{Get Device for Training}
+
+\begin{lstlisting}
+device = (
+    "cuda" if torch.cuda.is_available() # check if GPU is available
+    else "mps" # use CPU in case GPU is not available
+    if torch.backends.mps.is_available() # check if multi-process service is available
+    else "cpu" # use CPU in case multi-process service is not available
+    else "cpu"
+)
+print(f"Using {device} device")
+\end{lstlisting}
+
+\subsection{Define the Class}
+
+We define our neural network by subclassing nn.Module, and initialize the 
+neural network layers in \_\_init\_\_. Every nn.Module subclass implements the 
+operations on input data in the forward method.
+
+\begin{lstlisting}
+class NeuralNetwork(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.flatten = nn.Flatten()
+        self.linear_relu_stack = nn.Sequential(
+            nn.Linear(28*28, 512),
+            nn.ReLU(),
+            nn.Linear(512, 512),
+            nn.ReLU(),
+            nn.Linear(512, 10),
+        )
+
+    def forward(self, x):
+        x = self.flatten(x)
+        logits = self.linear_relu_stack(x)
+        return logits
+\end{lstlisting}
+
+\subsection{Model Layers}
+
+\begin{lstlisting}
+input_image = torch.rand(3,28,28)
+print(input_image.size())
+\end{lstlisting}
+
+\begin{lstlisting}
+flatten = nn.Flatten()
+flat_image = flatten(input_image)
+print(flat_image.size())
+\end{lstlisting}
+
+\begin{lstlisting}
+layer1 = nn.Linear(in_features=28*28, out_features=20)
+hidden1 = layer1(flat_image)
+print(hidden1.size())
+\end{lstlisting}
+
+\begin{lstlisting}
+print(f"Before ReLU: {hidden1}\n\n")
+hidden1 = nn.ReLU()(hidden1)
+print(f"After ReLU: {hidden1}")
+\end{lstlisting}
+
+\begin{lstlisting}
+seq_modules = nn.Sequential(
+    flatten,
+    layer1,
+    nn.ReLU(),
+    nn.Linear(20, 10)
+)
+input_image = torch.rand(3,28,28)
+logits = seq_modules(input_image)
+\end{lstlisting}
+
+\begin{lstlisting}
+softmax = nn.Softmax(dim=1)
+pred_probab = softmax(logits)
+\end{lstlisting}
+
+\begin{lstlisting}
+print(f"Model structure: {model}\n\n")
+
+for name, param in model.named_parameters():
+    print(f"Layer: {name} | Size: {param.size()} | Values : {param[:2]} \n")
+\end{lstlisting}
+
+\section{Automatic Differentiation with torch.autograd}
+
+\section{Optimizing Model Parameters}
+
 \end{document}
